@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import RemoveBtn from "./RemoveBtn";
 import Box from "@mui/material/Box";
@@ -10,66 +9,17 @@ import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Alert from "@mui/material/Alert";
-import Skeleton from "@mui/material/Skeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import ArticleIcon from "@mui/icons-material/Article";
 
-function TopicSkeleton() {
-  return (
-    <Card sx={{ p: 1 }}>
-      <CardContent sx={{ p: "12px 16px !important" }}>
-        <Skeleton variant="text" width="60%" height={28} sx={{ mb: 0.5 }} />
-        <Skeleton variant="text" width="90%" />
-        <Skeleton variant="text" width="75%" />
-      </CardContent>
-    </Card>
-  );
-}
-
-export default function TopicsListLoggedIn() {
-  const [topics, setTopics] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const getTopics = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}topics`, {
-          cache: "no-store",
-        });
-        if (!res.ok) throw new Error("Failed to fetch topics");
-        const data = await res.json();
-        setTopics(data.topics || []);
-      } catch (err) {
-        setError("Could not load topics. Please refresh the page.");
-        console.error("Error loading topics:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getTopics();
-  }, []);
-
-  if (loading) {
+export default function TopicsListClient({ topics }) {
+  if (!topics || topics.length === 0) {
     return (
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-        {[1, 2, 3].map((i) => <TopicSkeleton key={i} />)}
+      <Box sx={{ mt: 4 }}>
+        <Alert severity="info" sx={{ borderRadius: 2 }}>
+          No topics yet. Be the first to add one!
+        </Alert>
       </Box>
-    );
-  }
-
-  if (error) {
-    return <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>{error}</Alert>;
-  }
-
-  if (topics.length === 0) {
-    return (
-      <Alert severity="info" sx={{ mt: 2, borderRadius: 2 }}>
-        You haven&apos;t added any topics yet.{" "}
-        <Link href="/addTopic" style={{ color: "#a78bfa", fontWeight: 600 }}>
-          Add your first one!
-        </Link>
-      </Alert>
     );
   }
 
