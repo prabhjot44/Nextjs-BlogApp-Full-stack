@@ -1,8 +1,8 @@
-import LoginForm from "@/components/LoginForm";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import TopicsList from "@/components/TopicsList";
+import HomeClient from "./HomeClient";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -10,9 +10,8 @@ export default async function Home() {
   if (session) redirect("/dashboard");
 
   return (
-    <>
+    <HomeClient>
       <TopicsList />
-      {/* <LoginForm /> */}
-    </>
+    </HomeClient>
   );
 }
